@@ -21,6 +21,7 @@ from .procrustes import OrthogonalProcrustesCenteredAndNormalized
 from .procrustes import PermutationProcrustes
 from .procrustes import ProcrustesSizeAndShapeDistance
 from .rsa import RSA
+from .rwka import RWKA
 from .rsm_norm_difference import RSMNormDifference
 from .rtd import RTD
 from .statistics import ConcentricityDifference
@@ -53,6 +54,7 @@ CLASSES = [
     MagnitudeDifference,
     UniformityDifference,
     CKA,
+    RWKA,
     RTD,
 ]
 
