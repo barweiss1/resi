@@ -22,6 +22,9 @@ from .procrustes import PermutationProcrustes
 from .procrustes import ProcrustesSizeAndShapeDistance
 from .rsa import RSA
 from .rwka import RWKA
+from .rwka_auc import RWKA_AUC
+from .cka_rbf import CKA_RBF
+from .cka_rbf_auc import CKA_RBF_AUC
 from .rsm_norm_difference import RSMNormDifference
 from .rtd import RTD
 from .statistics import ConcentricityDifference
@@ -56,6 +59,9 @@ CLASSES = [
     CKA,
     RWKA,
     RTD,
+    CKA_RBF,
+    CKA_RBF_AUC,
+    RWKA_AUC,
 ]
 
 ALL_MEASURES: dict[str, RepresentationalSimilarityMeasure] = {m().name: m() for m in CLASSES}
