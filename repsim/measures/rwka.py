@@ -6,6 +6,7 @@ from repsim.measures.utils import flatten
 from repsim.measures.utils import RepresentationalSimilarityMeasure
 from repsim.measures.utils import SHAPE_TYPE
 from repsim.measures.utils import to_torch_if_needed
+from repsim.measures.cka_rbf import get_median_distance
 
 # --------------------------------- --------------------------------- #
 # Random walk kernel alignment (RWKA)
@@ -19,6 +20,10 @@ def random_walk_kernel_alignment(
     """Random walk kernel alignment (RWKA)"""
     R, Rp = flatten(R, Rp, shape=shape)
     R, Rp = to_torch_if_needed(R, Rp)
+
+    # higher precision to avoid numerical issues with small sigma values
+    R = R.double()
+    Rp = Rp.double()
 
     # compute distance matrices
     dist_matR = torch.cdist(R, R)
@@ -42,15 +47,6 @@ def random_walk_kernel_alignment(
     # aggregate the similarity scores across different sigma values by the sum of all values 
     # which corresponds to the area under the curve (AUC) of the similarity scores across different sigma values
     return sum(similarity_vec) / len(similarity_vec)
-
-
-def get_median_distance(dist_mat):
-    """
-    Compute the median distance from the distance matrix, 
-    using the lower triangular part (excluding diagonal)
-    """
-    tril_indices = torch.tril_indices(dist_mat.shape[0], dist_mat.shape[1], offset=-1)
-    return torch.median(dist_mat[tril_indices[0], tril_indices[1]]).item()
 
 
 def rw_similarity(K, Kp, unbiased=False) -> float:
