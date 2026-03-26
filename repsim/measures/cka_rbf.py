@@ -6,9 +6,6 @@ from repsim.measures.utils import flatten
 from repsim.measures.utils import RepresentationalSimilarityMeasure
 from repsim.measures.utils import SHAPE_TYPE
 from repsim.measures.utils import to_torch_if_needed
-from repsim.measures.cka import centered_kernel_alignment, hsic
-
-
 
 
 def hsic_biased(K, Kp):
@@ -68,6 +65,8 @@ def rbf_centered_kernel_alignment(
     R: Union[torch.Tensor, npt.NDArray],
     Rp: Union[torch.Tensor, npt.NDArray],
     shape: SHAPE_TYPE,
+    sigma: float = 1.0,
+    unbiased: bool = False,
 ) -> float:
     """RBF centered kernel alignment"""
     R, Rp = flatten(R, Rp, shape=shape)
@@ -86,19 +85,13 @@ def rbf_centered_kernel_alignment(
     R_median_dist = get_median_distance(dist_matR)
     Rp_median_dist = get_median_distance(dist_matRp)
 
-    sigma_vec = torch.linspace(0.1, 10.0, steps=30)
-    similarity_vec = []
-    for sigma in sigma_vec:
-        # compute the random walk kernels
-        K = torch.exp(-dist_matR / ((R_median_dist * sigma) ** 2))
-        Kp = torch.exp(-dist_matRp / ((Rp_median_dist * sigma) ** 2))
-
-        # add to the similarity vector
-        similarity_vec.append(cka(K, Kp, unbiased=False))
+    # compute the RBF kernel matrices 
+    K = torch.exp(-dist_matR / ((R_median_dist * sigma) ** 2))
+    Kp = torch.exp(-dist_matRp / ((Rp_median_dist * sigma) ** 2))
 
     # aggregate the similarity scores across different sigma values by the sum of all values 
     # which corresponds to the area under the curve (AUC) of the similarity scores across different sigma values
-    return sum(similarity_vec) / len(similarity_vec)
+    return cka_kernel(K, Kp, unbiased=unbiased)
 
 
 

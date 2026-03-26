@@ -16,6 +16,8 @@ def random_walk_kernel_alignment(
     R: Union[torch.Tensor, npt.NDArray],
     Rp: Union[torch.Tensor, npt.NDArray],
     shape: SHAPE_TYPE,
+    sigma: float = 1.0,
+    unbiased: bool = False,
 ) -> float:
     """Random walk kernel alignment (RWKA)"""
     R, Rp = flatten(R, Rp, shape=shape)
@@ -34,19 +36,11 @@ def random_walk_kernel_alignment(
     R_median_dist = get_median_distance(dist_matR)
     Rp_median_dist = get_median_distance(dist_matRp)
 
-    sigma_vec = torch.linspace(0.1, 10.0, steps=30)
-    similarity_vec = []
-    for sigma in sigma_vec:
-        # compute the random walk kernels
-        K = torch.exp(-dist_matR / ((R_median_dist * sigma) ** 2))
-        Kp = torch.exp(-dist_matRp / ((Rp_median_dist * sigma) ** 2))
+    # compute the random walk kernels
+    K = torch.exp(-dist_matR / ((R_median_dist * sigma) ** 2))
+    Kp = torch.exp(-dist_matRp / ((Rp_median_dist * sigma) ** 2))
 
-        # add to the similarity vector
-        similarity_vec.append(rw_similarity(K, Kp, unbiased=False))
-
-    # aggregate the similarity scores across different sigma values by the sum of all values 
-    # which corresponds to the area under the curve (AUC) of the similarity scores across different sigma values
-    return sum(similarity_vec) / len(similarity_vec)
+    return rw_similarity(K, Kp, unbiased=unbiased)
 
 
 def rw_similarity(K, Kp, unbiased=False) -> float:
