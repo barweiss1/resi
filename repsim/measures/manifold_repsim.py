@@ -45,7 +45,7 @@ MANIFOLD_RESI_MEASURE_CLASSES = [
 
 def _as_nd(R: Any, Rp: Any, shape: str):
     if _resi_flatten is not None:
-        return _resi_flatten(R, Rp, shape)
+        return _resi_flatten(R, Rp, shape=shape)
 
     if shape not in {"nd", "ntd", "nchw"}:
         raise ValueError(f"Unsupported ReSi representation shape: {shape}")
