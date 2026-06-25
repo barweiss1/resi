@@ -31,6 +31,7 @@ from .statistics import ConcentricityDifference
 from .statistics import MagnitudeDifference
 from .statistics import UniformityDifference
 from .utils import RepresentationalSimilarityMeasure
+from .manifold_repsim import ManifoldMutualKNNTop10, ManifoldCKNNATop10, ManifoldRBFRWKASigma05, ManifoldSoftmaxRWKATemp05, ManifoldRBFCKASigma05
 
 CLASSES = [
     PWCCA,
@@ -62,6 +63,12 @@ CLASSES = [
     CKA_RBF,
     CKA_RBF_AUC,
     RWKA_AUC,
+
+    ManifoldMutualKNNTop10,
+    ManifoldCKNNATop10,
+    ManifoldRBFRWKASigma05,
+    ManifoldSoftmaxRWKATemp05,
+    ManifoldRBFCKASigma05,
 ]
 
 ALL_MEASURES: dict[str, RepresentationalSimilarityMeasure] = {m().name: m() for m in CLASSES}
